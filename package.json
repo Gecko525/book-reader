@@ -1,0 +1,96 @@
+{
+	"name": "book-reader",
+	"displayName": "Book Reader",
+	"description": "在 VSCode 的终端里读书",
+	"version": "0.0.3",
+	"publisher": "wuls",
+	"private": true,
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.74.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [],
+	"main": "./out/extension.js",
+	"icon": "media/logo.png",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "book-reader",
+					"title": "Book Reader",
+					"icon": "media/book.svg"
+				}
+			]
+		},
+		"views": {
+			"book-reader": [
+				{
+					"id": "book-reader",
+					"name": "Book Reader",
+					"icon": "media/book.svg",
+					"contextualTitle": "Book Reader"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "bookReader.importBook",
+				"title": "导入",
+				"icon": {
+					"light": "resources/light/import.svg",
+					"dark": "resources/dark/import.svg"
+				}
+			},
+			{
+				"command": "bookReader.refresh",
+				"title": "刷新",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "bookReader.importBook",
+					"when": "view == book-reader",
+					"group": "navigation"
+				},
+				{
+					"command": "bookReader.refresh",
+					"when": "view == book-reader",
+					"group": "navigation"
+				}
+			]
+		},
+		"configuration": [
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"build": "vsce package",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"lint": "eslint"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.13.0",
+		"@stylistic/eslint-plugin": "^2.9.0",
+		"@types/ftp": "^0.3.33",
+		"@types/mkdirp": "^0.5.2",
+		"@types/node": "^20",
+		"@types/rimraf": "^2.0.2",
+		"@types/vscode": "^1.73.0",
+		"eslint": "^9.13.0",
+		"typescript": "^5.8.2",
+		"typescript-eslint": "^8.26.0"
+	},
+	"dependencies": {
+		"mkdirp": "^0.5.1",
+		"rimraf": "^2.6.2"
+	}
+}
