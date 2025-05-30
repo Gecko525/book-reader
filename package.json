@@ -6,6 +6,10 @@
 	"publisher": "wuls",
 	"private": true,
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Gecko525/book-reader.git"
+	},
 	"engines": {
 		"vscode": "^1.74.0"
 	},
