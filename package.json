@@ -1,9 +1,9 @@
 {
 	"name": "book-reader",
-	"displayName": "Book Reader",
-	"description": "在 VSCode 的终端里读书",
+	"displayName": "终端阅读器",
+	"description": "在 VS Code 的终端里读书",
 	"version": "0.0.3",
-	"publisher": "wuls",
+	"publisher": "Gecko525",
 	"private": true,
 	"license": "MIT",
 	"repository": {
@@ -24,7 +24,7 @@
 			"activitybar": [
 				{
 					"id": "book-reader",
-					"title": "Book Reader",
+					"title": "终端阅读器",
 					"icon": "media/book.svg"
 				}
 			]
@@ -33,9 +33,9 @@
 			"book-reader": [
 				{
 					"id": "book-reader",
-					"name": "Book Reader",
+					"name": "终端阅读器",
 					"icon": "media/book.svg",
-					"contextualTitle": "Book Reader"
+					"contextualTitle": "终端阅读器"
 				}
 			]
 		},
