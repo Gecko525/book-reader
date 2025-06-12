@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+import { log } from 'console';
+import EmptyProvider, { EmptyWebviewItem } from './emptyProvider';
 
 // const fs = vscode.workspace.fs;
 //#region Utilities
@@ -165,7 +167,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 	private _onDidChangeFile: vscode.EventEmitter<vscode.FileChangeEvent[]>;
 	private _onDidChangeTreeData: vscode.EventEmitter<Entry | undefined | null | void> = new vscode.EventEmitter<Entry | undefined | null | void>();;
 
-	constructor(private rootPath: string) {
+	constructor(private booksPath: string) {
 		this._onDidChangeFile = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
 	}
 
@@ -292,7 +294,6 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 	}
 
 	// tree data provider
-
 	async getChildren(element?: Entry): Promise<Entry[]> {
 		if (element) {
 			const children = await this.readDirectory(element.uri);
@@ -310,23 +311,27 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		}
 
 		// const workspaceFolder = (vscode.workspace.workspaceFolders ?? []).filter(folder => folder.uri.scheme === 'file')[0];
-		const rootFolderUri = vscode.Uri.file(path.join(this.rootPath, 'books'));
-		if (rootFolderUri) {
-			const children = await this.readDirectory(rootFolderUri);
-			children.sort((a, b) => {
-				if (a[1] === b[1]) {
-					return a[0].localeCompare(b[0]);
-				}
-				return a[1] === vscode.FileType.Directory ? -1 : 1;
-			});
-			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(rootFolderUri.fsPath, name)), siblings: children, pname: '', name, type }));
+		// 确保存储目录存在
+		const isExists = await _.exists(this.booksPath);
+		if (!isExists) {
+			await _.mkdir(this.booksPath);
 		}
-
-		return [];
+		const rootFolderUri = vscode.Uri.file(this.booksPath);
+		const children = await this.readDirectory(rootFolderUri);
+		// 设置上下文变量控制显示
+		vscode.commands.executeCommand('setContext', 'bookReader.isEmpty', children.length === 0);
+		children.sort((a, b) => {
+			if (a[1] === b[1]) {
+				return a[0].localeCompare(b[0]);
+			}
+			return a[1] === vscode.FileType.Directory ? -1 : 1;
+		});
+		return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(rootFolderUri.fsPath, name)), siblings: children, pname: '', name, type }));
 	}
 
 	getTreeItem(element: Entry): vscode.TreeItem {
 		const treeItem = new vscode.TreeItem(element.uri, element.type === vscode.FileType.Directory ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
+		treeItem.tooltip = element.name;
 		if (element.type === vscode.FileType.File) {
 			treeItem.command = { command: 'bookReader.readFile', title: "打开文件", arguments: [element], };
 			treeItem.contextValue = 'file';
@@ -343,16 +348,34 @@ type CustomTerminalLink = vscode.TerminalLink & {
 };
 
 export class FileExplorer {
-	private context: vscode.ExtensionContext;
 	private terminal: vscode.Terminal | undefined;
 	private terminalLinkProvider: vscode.Disposable | undefined;
 	private writeEmitter: vscode.EventEmitter<string> = new vscode.EventEmitter<string>();
-	constructor(context: vscode.ExtensionContext) {
+	constructor(private context: vscode.ExtensionContext, private booksPath: string) {
 		this.context = context;
-		const fileSystemProvider = new FileSystemProvider(context.globalStorageUri.fsPath);
-		vscode.window.registerTreeDataProvider('book-reader', fileSystemProvider);
+		this.booksPath = booksPath;
+		const fileSystemProvider = new FileSystemProvider(this.booksPath);
+		vscode.window.registerTreeDataProvider('bookReader.menusView', fileSystemProvider);
 		vscode.commands.registerCommand('bookReader.readFile', (element) => this.openResource(element));
 		vscode.commands.registerCommand('bookReader.refresh', () => fileSystemProvider.refresh());
+		vscode.commands.registerCommand('bookReader.delete', async (element) => {
+			// 显示确认对话框
+			const selection = await vscode.window.showWarningMessage(
+				`确定要删除 "${element.name}" 吗？此操作不可撤销。`,
+				{ modal: true },  // 设置为模态对话框
+				'确定删除'        // 确认按钮
+			);
+
+			if (selection === '确定删除') {
+				try {
+					await fileSystemProvider.delete(element.uri, { recursive: true });
+					fileSystemProvider.refresh();
+					vscode.window.showInformationMessage(`已删除: ${element.name}`);
+				} catch (error: any) {
+					vscode.window.showErrorMessage(`删除失败: ${error.message}`);
+				}
+			}
+		});
 	}
 
 	private async openResource(element: Entry): Promise<void> {

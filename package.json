@@ -2,7 +2,7 @@
 	"name": "book-reader",
 	"displayName": "终端阅读器",
 	"description": "在 VS Code 的终端里读书",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "Gecko525",
 	"private": true,
 	"license": "MIT",
@@ -20,6 +20,13 @@
 	"main": "./out/extension.js",
 	"icon": "media/logo.png",
 	"contributes": {
+		"viewsWelcome": [
+			{
+				"view": "bookReader.menusView",
+				"contents": "$(heart)欢迎使用终端阅读器$(heart)\n当前没有电子书，可批量导入电子书。\n\n[导入电子书](command:bookReader.importBook)",
+				"when": "bookReader.isEmpty"
+			}
+		],
 		"viewsContainers": {
 			"activitybar": [
 				{
@@ -32,7 +39,7 @@
 		"views": {
 			"book-reader": [
 				{
-					"id": "book-reader",
+					"id": "bookReader.menusView",
 					"name": "终端阅读器",
 					"icon": "media/book.svg",
 					"contextualTitle": "终端阅读器"
@@ -55,19 +62,28 @@
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
 				}
+			},
+			{
+				"command": "bookReader.delete",
+				"title": "删除"
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
 					"command": "bookReader.importBook",
-					"when": "view == book-reader",
+					"when": "view == bookReader.menusView",
 					"group": "navigation"
 				},
 				{
 					"command": "bookReader.refresh",
-					"when": "view == book-reader",
+					"when": "view == bookReader.menusView",
 					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "bookReader.delete"
 				}
 			]
 		},
