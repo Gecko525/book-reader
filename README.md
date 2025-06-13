@@ -8,8 +8,8 @@
 ![Book Reader](https://raw.githubusercontent.com/Gecko525/book-reader/refs/heads/main/resources/book-reader.png)
 
 ## 赞助一下
-![微信付款码](https://raw.githubusercontent.com/Gecko525/book-reader/refs/heads/main/resources/weixin-pay.jpg)
-感谢！
+[去赞助](https://raw.githubusercontent.com/Gecko525/book-reader/refs/heads/main/resources/weixin-pay.jpg)，感谢！
+
 
 ## 反馈
 提交 [Issue](https://github.com/Gecko525/book-reader/issues)

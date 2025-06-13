@@ -3,11 +3,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
-import { log } from 'console';
-import EmptyProvider, { EmptyWebviewItem } from './emptyProvider';
-
-// const fs = vscode.workspace.fs;
-//#region Utilities
 
 export namespace _ {
 	function handleResult<T>(resolve: (result: T) => void, reject: (error: Error) => void, error: Error | null | undefined, result: T): void {
@@ -309,8 +304,6 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 			});
 			return children.map(([name, type]) => ({ uri: vscode.Uri.file(path.join(element.uri.fsPath, name)), siblings: children, pname: element.name, name, type }));
 		}
-
-		// const workspaceFolder = (vscode.workspace.workspaceFolders ?? []).filter(folder => folder.uri.scheme === 'file')[0];
 		// 确保存储目录存在
 		const isExists = await _.exists(this.booksPath);
 		if (!isExists) {
@@ -319,7 +312,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		const rootFolderUri = vscode.Uri.file(this.booksPath);
 		const children = await this.readDirectory(rootFolderUri);
 		// 设置上下文变量控制显示
-		vscode.commands.executeCommand('setContext', 'bookReader.isEmpty', children.length === 0);
+		vscode.commands.executeCommand('setContext', 'terminalReader.isEmpty', children.length === 0);
 		children.sort((a, b) => {
 			if (a[1] === b[1]) {
 				return a[0].localeCompare(b[0]);
@@ -333,7 +326,7 @@ export class FileSystemProvider implements vscode.TreeDataProvider<Entry>, vscod
 		const treeItem = new vscode.TreeItem(element.uri, element.type === vscode.FileType.Directory ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
 		treeItem.tooltip = element.name;
 		if (element.type === vscode.FileType.File) {
-			treeItem.command = { command: 'bookReader.readFile', title: "打开文件", arguments: [element], };
+			treeItem.command = { command: 'terminalReader.readFile', title: "打开文件", arguments: [element], };
 			treeItem.contextValue = 'file';
 		}
 		return treeItem;
@@ -355,10 +348,10 @@ export class FileExplorer {
 		this.context = context;
 		this.booksPath = booksPath;
 		const fileSystemProvider = new FileSystemProvider(this.booksPath);
-		vscode.window.registerTreeDataProvider('bookReader.menusView', fileSystemProvider);
-		vscode.commands.registerCommand('bookReader.readFile', (element) => this.openResource(element));
-		vscode.commands.registerCommand('bookReader.refresh', () => fileSystemProvider.refresh());
-		vscode.commands.registerCommand('bookReader.delete', async (element) => {
+		vscode.window.registerTreeDataProvider('terminalReader.menusView', fileSystemProvider);
+		vscode.commands.registerCommand('terminalReader.readFile', (element) => this.openResource(element));
+		vscode.commands.registerCommand('terminalReader.refresh', () => fileSystemProvider.refresh());
+		vscode.commands.registerCommand('terminalReader.delete', async (element) => {
 			// 显示确认对话框
 			const selection = await vscode.window.showWarningMessage(
 				`确定要删除 "${element.name}" 吗？此操作不可撤销。`,
@@ -467,10 +460,10 @@ export class FileExplorer {
 			},
 			handleTerminalLink: (link: any) => {
 				if (link.type === 'pre' && preResource) {
-					vscode.commands.executeCommand('bookReader.readFile', { ...element, uri: link.pre, name: path.basename(preResource.fsPath) });
+					vscode.commands.executeCommand('terminalReader.readFile', { ...element, uri: link.pre, name: path.basename(preResource.fsPath) });
 				}
 				if (link.type === 'next' && nextResource) {
-					vscode.commands.executeCommand('bookReader.readFile', { ...element, uri: link.next, name: path.basename(nextResource.fsPath) });
+					vscode.commands.executeCommand('terminalReader.readFile', { ...element, uri: link.next, name: path.basename(nextResource.fsPath) });
 				}
 			}
 		});

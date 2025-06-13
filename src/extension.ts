@@ -13,24 +13,3 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.showErrorMessage(error.message);
 	}
 }
-
-// "viewsContainers": {
-// 	"activitybar": [
-// 		{
-// 			"id": "book-reader",
-// 			"title": "终端阅读器",
-// 			"icon": "media/book.svg"
-// 		}
-// 	]
-// },
-// "views": {
-// 	"book-reader": [
-// 		{
-// 			"id": "bookReader.menusView",
-// 			"name": "终端阅读器",
-// 			"icon": "media/book.svg",
-// 			"contextualTitle": "终端阅读器",
-// 			"when": "!bookReader.isEmpty"
-// 		}
-// 	]
-// },

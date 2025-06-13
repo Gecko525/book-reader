@@ -1,5 +1,5 @@
 {
-	"name": "book-reader",
+	"name": "terminal-reader",
 	"displayName": "终端阅读器",
 	"description": "在 VS Code 的终端里读书",
 	"version": "0.0.4",
@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Gecko525/book-reader.git"
+		"url": "https://github.com/Gecko525/terminal-reader.git"
 	},
 	"engines": {
 		"vscode": "^1.74.0"
@@ -22,24 +22,24 @@
 	"contributes": {
 		"viewsWelcome": [
 			{
-				"view": "bookReader.menusView",
-				"contents": "$(heart)欢迎使用终端阅读器$(heart)\n当前没有电子书，可批量导入电子书。\n\n[导入电子书](command:bookReader.importBook)",
-				"when": "bookReader.isEmpty"
+				"view": "terminalReader.menusView",
+				"contents": "$(heart)欢迎使用终端阅读器$(heart)\n当前没有电子书，可批量导入电子书。\n\n[导入电子书](command:terminalReader.importBook)",
+				"when": "terminalReader.isEmpty"
 			}
 		],
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "book-reader",
+					"id": "terminal-reader",
 					"title": "终端阅读器",
 					"icon": "media/book.svg"
 				}
 			]
 		},
 		"views": {
-			"book-reader": [
+			"terminal-reader": [
 				{
-					"id": "bookReader.menusView",
+					"id": "terminalReader.menusView",
 					"name": "终端阅读器",
 					"icon": "media/book.svg",
 					"contextualTitle": "终端阅读器"
@@ -48,7 +48,7 @@
 		},
 		"commands": [
 			{
-				"command": "bookReader.importBook",
+				"command": "terminalReader.importBook",
 				"title": "导入",
 				"icon": {
 					"light": "resources/light/import.svg",
@@ -56,7 +56,7 @@
 				}
 			},
 			{
-				"command": "bookReader.refresh",
+				"command": "terminalReader.refresh",
 				"title": "刷新",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -64,26 +64,26 @@
 				}
 			},
 			{
-				"command": "bookReader.delete",
+				"command": "terminalReader.delete",
 				"title": "删除"
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
-					"command": "bookReader.importBook",
-					"when": "view == bookReader.menusView",
+					"command": "terminalReader.importBook",
+					"when": "view == terminalReader.menusView",
 					"group": "navigation"
 				},
 				{
-					"command": "bookReader.refresh",
-					"when": "view == bookReader.menusView",
+					"command": "terminalReader.refresh",
+					"when": "view == terminalReader.menusView",
 					"group": "navigation"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "bookReader.delete"
+					"command": "terminalReader.delete"
 				}
 			]
 		},

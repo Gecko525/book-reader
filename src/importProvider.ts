@@ -5,7 +5,7 @@ import { _ } from './fileExplorer';
 export default class ImportProvider {
 
   constructor(context: vscode.ExtensionContext) {
-    vscode.commands.registerCommand('bookReader.importBook', async () => {
+    vscode.commands.registerCommand('terminalReader.importBook', async () => {
       try {
         const paths = await this.getPathsFromPicker();
         // 获取插件存储目录
@@ -26,7 +26,7 @@ export default class ImportProvider {
           await this.copyFolderRecursive(_path.fsPath, targetFolderPath);
         }
         // 刷新树形视图
-        vscode.commands.executeCommand('bookReader.refresh');
+        vscode.commands.executeCommand('terminalReader.refresh');
         vscode.window.showInformationMessage(`导入成功!`);
       } catch (error: any) {
         console.error(error);
